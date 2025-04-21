@@ -27,46 +27,8 @@ function loadHubSpotScript() {
   document.head.appendChild(script);
 }
 
-// Function to format input as dollar amount with cap
+// Function to format input as dollar amount
 function formatDollarAmount(input) {
-  // Remove any non-digit characters
-  let value = input.value.replace(/\D/g, "");
-
-  // If empty or only non-numeric characters, clear the input
-  if (value === "") {
-    input.value = "";
-    return;
-  }
-
-  // Convert to number and ensure it's valid
-  let numValue = parseInt(value);
-  if (isNaN(numValue)) {
-    input.value = "";
-    return;
-  }
-
-  // Limit to 2 million
-  if (numValue > 2000000) {
-    numValue = 2000000;
-  }
-
-  // Format the number with commas and no cents
-  value = numValue.toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  });
-
-  // Remove the currency symbol (we'll add it manually to preserve cursor position)
-  value = value.replace(/^\$/, "");
-
-  // Update the input value
-  input.value = "$" + value;
-}
-
-// Function to format input as dollar amount without cap
-function formatDollarAmountUncapped(input) {
   // Remove any non-digit characters
   let value = input.value.replace(/\D/g, "");
 
@@ -127,32 +89,29 @@ function formatDate(input) {
 // Find all inputs with data-type="dollar"
 const dollarInputs = document.querySelectorAll('input[data-type="dollar"]');
 dollarInputs.forEach((input) => {
-  // Skip the Funding-Amount and Revenue-per-month fields as they're handled separately
-  if (input.id !== "Funding-Amount" && input.id !== "Revenue-per-month") {
-    input.addEventListener("input", function () {
-      if (this.value.trim() !== "") {
-        formatDollarAmountUncapped(this);
-      }
-    });
-  }
+  input.addEventListener("input", function () {
+    if (this.value.trim() !== "") {
+      formatDollarAmount(this);
+    }
+  });
 });
 
-// Handle Funding-Amount input without cap
+// Handle Funding-Amount input
 const fundingInput = document.getElementById("Funding-Amount");
 if (fundingInput) {
   fundingInput.addEventListener("input", function () {
     if (this.value.trim() !== "") {
-      formatDollarAmountUncapped(this);
+      formatDollarAmount(this);
     }
   });
 }
 
-// Handle Revenue-per-month input without cap
+// Handle Revenue-per-month input
 const revenueInput = document.getElementById("Revenue-per-month");
 if (revenueInput) {
   revenueInput.addEventListener("input", function () {
     if (this.value.trim() !== "") {
-      formatDollarAmountUncapped(this);
+      formatDollarAmount(this);
     }
   });
 }
