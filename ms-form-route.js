@@ -266,6 +266,43 @@ document.addEventListener("DOMContentLoaded", function () {
       return value.replace(/[$,]/g, "").trim();
     };
 
+    // Get UTM parameters from existing cookie
+    const utmParams = getCookie("PPC Attribution Tracker") || {};
+
+    // Add UTM parameters to fields array
+    if (utmParams) {
+      if (utmParams.utm_campaign) {
+        fields.push({
+          name: "utm_campaign",
+          value: utmParams.utm_campaign,
+        });
+      }
+      if (utmParams.utm_source) {
+        fields.push({
+          name: "utm_source",
+          value: utmParams.utm_source,
+        });
+      }
+      if (utmParams.utm_medium) {
+        fields.push({
+          name: "utm_medium",
+          value: utmParams.utm_medium,
+        });
+      }
+      if (utmParams.utm_term) {
+        fields.push({
+          name: "utm_term",
+          value: utmParams.utm_term,
+        });
+      }
+      if (utmParams.utm_content) {
+        fields.push({
+          name: "utm_content",
+          value: utmParams.utm_content,
+        });
+      }
+    }
+
     // Map form fields to HubSpot fields - only the essential ones
     const fieldMapping = {
       "First-Name": "firstname",

@@ -23,7 +23,7 @@
     {
       "label": "Build Production",
       "type": "npm",
-      "script": "build",
+      "script": "build:prod",
       "group": "build",
       "problemMatcher": ["$tsc"],
       "presentation": {
@@ -36,7 +36,7 @@
       "label": "Watch and Build Production",
       "type": "shell",
       "command": "nodemon",
-      "args": ["--watch", "ms-form-route.js", "--ext", "js", "--exec", "npm run build"],
+      "args": ["--watch", "ms-form-route.js", "--ext", "js", "--exec", "npm run build:prod"],
       "problemMatcher": ["$tsc"],
       "isBackground": true,
       "presentation": {

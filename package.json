@@ -5,6 +5,7 @@
   "main": "ms-form-route.js",
   "scripts": {
     "build": "cross-env NODE_ENV=production rimraf dist && esbuild ms-form-route.js --bundle --minify --sourcemap --target=es2015 --outfile=dist/ms-form-route.js",
+    "build:prod": "cross-env NODE_ENV=production rimraf dist && esbuild ms-form-route.js --bundle --minify --sourcemap=external --target=es2015 --drop:console --drop:debugger --legal-comments=none --outfile=dist/ms-form-route.js",
     "watch": "esbuild ms-form-route.js --bundle --sourcemap --target=es2015 --outfile=dist/ms-form-route.js --watch"
   },
   "devDependencies": {
