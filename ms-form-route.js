@@ -174,22 +174,40 @@ if (startDateInput) {
 
 // HubSpot form submission handler
 document.addEventListener("DOMContentLoaded", function () {
-  // console.log("DOM Content Loaded");
-
   // Load HubSpot Forms script
   loadHubSpotScript();
 
   const form = document.getElementById("wf-form-SMB");
-  // console.log("Found form element:", form);
 
   if (!form) {
     console.error("Form element not found! Check if the form ID is correct.");
     return;
   }
 
+  // Track initial form view when form becomes visible
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting && window._hsq && !window._formViewTracked) {
+        window._hsq.push(["trackEvent", { id: "form_view" }]);
+        window._formViewTracked = true;
+
+        // Track form as HubSpot form view
+        window._hsq.push([
+          "trackForms",
+          {
+            formId: "e387a024-a165-4d47-956c-23e0e1f6b7eb",
+            formInstanceId: form.getAttribute("data-form-instance-id") || "1",
+          },
+        ]);
+      }
+    });
+  });
+
+  observer.observe(form);
+
   // HubSpot form configuration
-  const portalId = "19654160"; // Your HubSpot portal ID
-  const formId = "e387a024-a165-4d47-956c-23e0e1f6b7eb"; // Your HubSpot form GUID
+  const portalId = "19654160";
+  const formId = "e387a024-a165-4d47-956c-23e0e1f6b7eb";
 
   // Get HubSpot tracking cookie
   function getHubSpotCookie() {
@@ -281,9 +299,11 @@ document.addEventListener("DOMContentLoaded", function () {
       if (window._hsq) {
         // Track form submission as conversion
         window._hsq.push([
-          "trackConversion",
+          "trackFormSubmission",
+          formId,
           {
-            id: formId,
+            formVariant: "A",
+            formInstanceId: form.getAttribute("data-form-instance-id") || "1",
           },
         ]);
 
@@ -405,8 +425,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Instead of form submit listener, use Formly's submit button
   const formlySubmitBtn = document.querySelector("#submit");
   if (formlySubmitBtn) {
-    // console.log("Found Formly submit button, adding click listener");
-
     // Track form step progression
     const trackFormStep = (stepNumber) => {
       if (window._hsq) {
@@ -428,23 +446,58 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     formlySubmitBtn.addEventListener("click", async function (e) {
-      // console.log("Formly submit button clicked - preparing HubSpot submission");
-
-      const successMessage = document.querySelector(".w-form-done");
-      const errorMessage = document.querySelector(".w-form-fail");
-
       try {
-        // console.log("Starting HubSpot submission process");
         const formData = new FormData(form);
-        // console.log("Form data collected:", Object.fromEntries(formData));
+
+        // Track form submission attempt
+        if (window._hsq) {
+          window._hsq.push(["trackEvent", { id: "form_submit_attempt" }]);
+        }
 
         const result = await submitToHubSpot(formData);
-        // console.log("HubSpot submission completed successfully");
-        // Let Formly handle the success UI
+
+        // Track successful form submission
+        if (window._hsq) {
+          // Track form submission as conversion
+          window._hsq.push([
+            "trackFormSubmission",
+            formId,
+            {
+              formVariant: "A",
+              formInstanceId: form.getAttribute("data-form-instance-id") || "1",
+            },
+          ]);
+
+          // Track form submission success event
+          window._hsq.push(["trackEvent", { id: "form_submission_success" }]);
+
+          // Identify the user
+          window._hsq.push([
+            "identify",
+            {
+              email: formData.get("Email"),
+              firstname: formData.get("First-Name"),
+              lastname: formData.get("Last-Name"),
+            },
+          ]);
+        }
       } catch (error) {
         console.error("HubSpot submission failed:", error);
-        errorMessage.style.display = "block";
-        successMessage.style.display = "none";
+        const errorMessage = document.querySelector(".w-form-fail");
+        if (errorMessage) {
+          errorMessage.style.display = "block";
+        }
+
+        // Track form submission failure
+        if (window._hsq) {
+          window._hsq.push([
+            "trackEvent",
+            {
+              id: "form_submission_error",
+              value: error.message,
+            },
+          ]);
+        }
       }
     });
   } else {
