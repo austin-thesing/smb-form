@@ -13,14 +13,18 @@ function formatDollarAmount(input) {
   // Remove any non-digit characters
   let value = input.value.replace(/\D/g, "");
 
-  // If empty, set to 0
+  // If empty or only non-numeric characters, clear the input
   if (value === "") {
     input.value = "";
     return;
   }
 
-  // Convert to number
+  // Convert to number and ensure it's valid
   let numValue = parseInt(value);
+  if (isNaN(numValue)) {
+    input.value = "";
+    return;
+  }
 
   // Limit to 2 million
   if (numValue > 2000000) {
@@ -60,7 +64,20 @@ function formatDate(input) {
   input.value = value;
 }
 
-// Find the Funding-Amount input
+// Find all inputs with data-type="dollar"
+const dollarInputs = document.querySelectorAll('input[data-type="dollar"]');
+dollarInputs.forEach((input) => {
+  // Skip the Funding-Amount field as it's handled separately
+  if (input.id !== "Funding-Amount") {
+    input.addEventListener("input", function () {
+      if (this.value.trim() !== "") {
+        formatDollarAmount(this);
+      }
+    });
+  }
+});
+
+// Find the Funding-Amount input and handle it separately
 const fundingInput = document.getElementById("Funding-Amount");
 if (fundingInput) {
   fundingInput.addEventListener("input", function () {
