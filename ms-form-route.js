@@ -13,6 +13,12 @@ function formatDollarAmount(input) {
   // Remove any non-digit characters
   let value = input.value.replace(/\D/g, "");
 
+  // If empty, set to 0
+  if (value === "") {
+    input.value = "";
+    return;
+  }
+
   // Convert to number
   let numValue = parseInt(value);
 
@@ -54,21 +60,15 @@ function formatDate(input) {
   input.value = value;
 }
 
-// Find all inputs with data-type="dollar"
-const dollarInputs = document.querySelectorAll('input[data-type="dollar"]');
-console.log("Found dollar inputs:", dollarInputs.length);
-
-// Add event listeners to each dollar input
-dollarInputs.forEach((input) => {
-  console.log("Adding listener to input:", input);
-  input.addEventListener("input", function () {
-    //console.log("Input event triggered, current value:", this.value);
-    // Only format if the input is not empty
+// Find the Funding-Amount input
+const fundingInput = document.getElementById("Funding-Amount");
+if (fundingInput) {
+  fundingInput.addEventListener("input", function () {
     if (this.value.trim() !== "") {
       formatDollarAmount(this);
     }
   });
-});
+}
 
 // Add date formatting to business start date input
 const startDateInput = document.getElementById("When-did-you-start-your-business");
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "Email": "email",
       "Phone": "phone",
       "Registered-Business-Name": "business_name",
-      "Industry": "industry_dropdown_",
+      "Industry": "industry__dropdown_",
       "Funding-Amount": "user_reported_desired_amount",
       "Revenue-per-month": "user_reported_monthly_revenue",
       "Use-of-funds": "use_of_funds",
