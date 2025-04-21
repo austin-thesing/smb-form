@@ -4,20 +4,12 @@
   "description": "SMB Form with HubSpot integration",
   "main": "ms-form-route.js",
   "scripts": {
-    "build": "cross-env NODE_ENV=production npm run clean && npm run build:js:prod && npm run build:html:prod",
-    "build:js:prod": "esbuild ms-form-route.js --bundle --minify --sourcemap --target=es2015 --outfile=dist/ms-form-route.js",
-    "build:html:prod": "html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true form-html.html -o dist/form-html.html",
-    "dev": "cross-env NODE_ENV=development npm run clean && concurrently \"npm run watch:js\" \"npm run watch:html\"",
-    "watch:js": "esbuild ms-form-route.js --bundle --sourcemap --target=es2015 --outfile=dist/ms-form-route.js --watch",
-    "watch:html": "nodemon --watch form-html.html --exec \"npm run build:html:dev\"",
-    "build:html:dev": "cp form-html.html dist/form-html.html",
-    "clean": "rimraf dist"
+    "build": "cross-env NODE_ENV=production rimraf dist && esbuild ms-form-route.js --bundle --minify --sourcemap --target=es2015 --outfile=dist/ms-form-route.js",
+    "watch": "esbuild ms-form-route.js --bundle --sourcemap --target=es2015 --outfile=dist/ms-form-route.js --watch"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "esbuild": "^0.20.1",
-    "html-minifier": "^4.0.0",
     "nodemon": "^3.1.0",
     "rimraf": "^5.0.5"
   }

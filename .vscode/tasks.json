@@ -2,14 +2,14 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Start Development",
+      "label": "Watch Development",
       "type": "npm",
-      "script": "dev",
+      "script": "watch",
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "problemMatcher": ["$esbuild"],
+      "problemMatcher": ["$tsc-watch"],
       "isBackground": true,
       "presentation": {
         "reveal": "always",
@@ -25,9 +25,22 @@
       "type": "npm",
       "script": "build",
       "group": "build",
-      "problemMatcher": ["$esbuild"],
+      "problemMatcher": ["$tsc"],
       "presentation": {
         "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      }
+    },
+    {
+      "label": "Watch and Build Production",
+      "type": "shell",
+      "command": "nodemon",
+      "args": ["--watch", "ms-form-route.js", "--ext", "js", "--exec", "npm run build"],
+      "problemMatcher": ["$tsc"],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "silent",
         "panel": "shared",
         "showReuseMessage": false
       }

@@ -7,13 +7,21 @@
     e = d.getElementsByTagName(s)[0];
   n.id = i;
   n.src = "//js.hs-analytics.net/analytics/" + Math.ceil(new Date() / r) * r + "/19654160.js";
+
+  // Add onload handler to ensure tracking happens after script loads
+  n.onload = function () {
+    if (window._hsq) {
+      window._hsq.push(["setPath", window.location.pathname]);
+      window._hsq.push(["trackPageView"]);
+    }
+  };
+
   e.parentNode.insertBefore(n, e);
 })(document, "script", "hs-analytics", 300000);
 
-// Initialize form analytics
+// Additional page view tracking on window load
 window.addEventListener("load", function () {
   if (window._hsq) {
-    // Track page view
     window._hsq.push(["setPath", window.location.pathname]);
     window._hsq.push(["trackPageView"]);
   }
@@ -214,7 +222,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Track successful form submission
       if (window._hsq) {
+        // Track form submission as conversion
+        window._hsq.push([
+          "trackConversion",
+          {
+            id: formId,
+          },
+        ]);
+
+        // Track form submission success event
         window._hsq.push(["trackEvent", { id: "form_submission_success" }]);
+
+        // Identify the user
         window._hsq.push([
           "identify",
           {

@@ -1,2 +1,309 @@
-(()=>{var q=Object.defineProperty;var v=Object.getOwnPropertySymbols;var D=Object.prototype.hasOwnProperty,F=Object.prototype.propertyIsEnumerable;var b=(t,e,n)=>e in t?q(t,e,{enumerable:!0,configurable:!0,writable:!0,value:n}):t[e]=n,S=(t,e)=>{for(var n in e||(e={}))D.call(e,n)&&b(t,n,e[n]);if(v)for(var n of v(e))F.call(e,n)&&b(t,n,e[n]);return t};var y=(t,e,n)=>new Promise((m,a)=>{var f=o=>{try{h(n.next(o))}catch(s){a(s)}},p=o=>{try{h(n.throw(o))}catch(s){a(s)}},h=o=>o.done?m(o.value):Promise.resolve(o.value).then(f,p);h((n=n.apply(t,e)).next())});(function(t,e,n,m){if(!t.getElementById(n)){var a=t.createElement(e),f=t.getElementsByTagName(e)[0];a.id=n,a.src="//js.hs-analytics.net/analytics/"+Math.ceil(new Date/m)*m+"/19654160.js",f.parentNode.insertBefore(a,f)}})(document,"script","hs-analytics",3e5);window.addEventListener("load",function(){window._hsq&&(window._hsq.push(["setPath",window.location.pathname]),window._hsq.push(["trackPageView"]))});function L(){let t=document.createElement("script");t.src="https://js.hsforms.net/forms/embed/19654160.js",t.defer=!0,document.head.appendChild(t)}function _(t){let e=t.value.replace(/\D/g,"");if(e===""){t.value="";return}let n=parseInt(e);if(isNaN(n)){t.value="";return}e=n.toLocaleString("en-US",{style:"currency",currency:"USD",minimumFractionDigits:0,maximumFractionDigits:0}),e=e.replace(/^\$/,""),t.value="$"+e}function B(t){let e=t.value.replace(/\D/g,"");if(e.length>=2){let n=parseInt(e.slice(0,2));n===0&&(n=1),n>12&&(n=12),e=n.toString().padStart(2,"0")+e.slice(2)}e.length>2&&(e=e.slice(0,2)+"/"+e.slice(2)),e.length>5&&(e=e.slice(0,5)),t.value=e}var N=document.querySelectorAll('input[data-type="dollar"]');N.forEach(t=>{t.addEventListener("input",function(){this.value.trim()!==""&&_(this)})});var E=document.getElementById("Funding-Amount");E&&E.addEventListener("input",function(){this.value.trim()!==""&&_(this)});var I=document.getElementById("Revenue-per-month");I&&I.addEventListener("input",function(){this.value.trim()!==""&&_(this)});var k=document.getElementById("When-did-you-start-your-business");k&&k.addEventListener("input",function(){B(this)});document.addEventListener("DOMContentLoaded",function(){L();let t=document.getElementById("wf-form-SMB");if(!t){console.error("Form element not found! Check if the form ID is correct.");return}let e="19654160",n="e387a024-a165-4d47-956c-23e0e1f6b7eb";function m(){var o;return((o=document.cookie.split("; ").find(s=>s.startsWith("hubspotutk=")))==null?void 0:o.split("=")[1])||""}function a(){return{pageUri:window.location.href,pageName:document.title}}function f(o){return y(this,null,function*(){let s=`https://api.hsforms.com/submissions/v3/integration/submit/${e}/${n}`,u=p(o);try{window._hsq&&!window._formStartTracked&&(window._hsq.push(["trackEvent",{id:"form_start"}]),window._formStartTracked=!0);let r=yield fetch(s,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(u)}),i=yield r.json();if(!r.ok)throw console.error("HubSpot Error Details:"),console.error("Status:",r.status),console.error("Response Data:",i),console.error("Fields Sent:",u.fields.map(c=>`${c.name}: ${c.value}`)),window._hsq&&window._hsq.push(["trackEvent",{id:"form_submission_error",value:r.status}]),new Error(`HubSpot submission failed: ${i.message||"Unknown error"}`);return window._hsq&&(window._hsq.push(["trackEvent",{id:"form_submission_success"}]),window._hsq.push(["identify",{email:o.get("Email"),firstname:o.get("First-Name"),lastname:o.get("Last-Name")}])),i}catch(r){throw console.error("Error submitting to HubSpot:",r),r}})}function p(o){let s=[],u=S({hutk:m()},a()),r=l=>l&&l.replace(/[$,]/g,"").trim(),i={"First-Name":"firstname","Last-Name":"lastname",Email:"email",Phone:"phone","Registered-Business-Name":"business_name",Industry:"industry__dropdown_","Funding-Amount":"user_reported_desired_amount","Revenue-per-month":"user_reported_monthly_revenue","Use-of-funds":"use_of_funds","Timeline-For-Loan":"when_do_you_need_the_loan_","When-did-you-start-your-business":"year_founded","Are-you-an-ecommerce-seller":"ecommerce_seller"};for(let[l,g]of Object.entries(i)){let d=o.get(l);if(l==="Industry"){let w=document.getElementById("Industry");w&&w.value&&(d=w.value)}d&&d.trim()!==""&&((l==="Funding-Amount"||l==="Revenue-per-month")&&(d=r(d)),g==="industry__dropdown_"?s.push({name:"industry__dropdown_",value:d.trim()}):s.push({name:g,value:d.trim()}))}let c=document.querySelector(".is-custom-select");return c&&c.value&&c.value!=="Business state*"&&s.push({name:"contact_state",value:c.value.trim()}),{fields:s,context:u}}let h=document.querySelector("#submit");if(h){let o=s=>{window._hsq&&window._hsq.push(["trackEvent",{id:"form_step_complete",value:s}])};document.querySelectorAll('[data-form="next-btn"]').forEach((s,u)=>{s.addEventListener("click",()=>{o(u+1)})}),h.addEventListener("click",function(s){return y(this,null,function*(){let u=document.querySelector(".w-form-done"),r=document.querySelector(".w-form-fail");try{let i=new FormData(t),c=yield f(i)}catch(i){console.error("HubSpot submission failed:",i),r.style.display="block",u.style.display="none"}})})}else console.error("Formly submit button not found! Check if the button ID is correct.")});})();
+(() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __propIsEnum = Object.prototype.propertyIsEnumerable;
+  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+  var __spreadValues = (a, b) => {
+    for (var prop in b || (b = {}))
+      if (__hasOwnProp.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    if (__getOwnPropSymbols)
+      for (var prop of __getOwnPropSymbols(b)) {
+        if (__propIsEnum.call(b, prop))
+          __defNormalProp(a, prop, b[prop]);
+      }
+    return a;
+  };
+  var __async = (__this, __arguments, generator) => {
+    return new Promise((resolve, reject) => {
+      var fulfilled = (value) => {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var rejected = (value) => {
+        try {
+          step(generator.throw(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+      step((generator = generator.apply(__this, __arguments)).next());
+    });
+  };
+
+  // ms-form-route.js
+  (function(d, s, i, r) {
+    if (d.getElementById(i)) {
+      return;
+    }
+    var n = d.createElement(s), e = d.getElementsByTagName(s)[0];
+    n.id = i;
+    n.src = "//js.hs-analytics.net/analytics/" + Math.ceil(/* @__PURE__ */ new Date() / r) * r + "/19654160.js";
+    n.onload = function() {
+      if (window._hsq) {
+        window._hsq.push(["setPath", window.location.pathname]);
+        window._hsq.push(["trackPageView"]);
+      }
+    };
+    e.parentNode.insertBefore(n, e);
+  })(document, "script", "hs-analytics", 3e5);
+  window.addEventListener("load", function() {
+    if (window._hsq) {
+      window._hsq.push(["setPath", window.location.pathname]);
+      window._hsq.push(["trackPageView"]);
+    }
+  });
+  function loadHubSpotScript() {
+    const script = document.createElement("script");
+    script.src = "https://js.hsforms.net/forms/embed/19654160.js";
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+  function formatDollarAmount(input) {
+    let value = input.value.replace(/\D/g, "");
+    if (value === "") {
+      input.value = "";
+      return;
+    }
+    let numValue = parseInt(value);
+    if (isNaN(numValue)) {
+      input.value = "";
+      return;
+    }
+    value = numValue.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+    value = value.replace(/^\$/, "");
+    input.value = "$" + value;
+  }
+  function formatDate(input) {
+    let value = input.value.replace(/\D/g, "");
+    if (value.length >= 2) {
+      let month = parseInt(value.slice(0, 2));
+      if (month === 0)
+        month = 1;
+      if (month > 12)
+        month = 12;
+      value = month.toString().padStart(2, "0") + value.slice(2);
+    }
+    if (value.length > 2) {
+      value = value.slice(0, 2) + "/" + value.slice(2);
+    }
+    if (value.length > 5) {
+      value = value.slice(0, 5);
+    }
+    input.value = value;
+  }
+  var dollarInputs = document.querySelectorAll('input[data-type="dollar"]');
+  dollarInputs.forEach((input) => {
+    input.addEventListener("input", function() {
+      if (this.value.trim() !== "") {
+        formatDollarAmount(this);
+      }
+    });
+  });
+  var fundingInput = document.getElementById("Funding-Amount");
+  if (fundingInput) {
+    fundingInput.addEventListener("input", function() {
+      if (this.value.trim() !== "") {
+        formatDollarAmount(this);
+      }
+    });
+  }
+  var revenueInput = document.getElementById("Revenue-per-month");
+  if (revenueInput) {
+    revenueInput.addEventListener("input", function() {
+      if (this.value.trim() !== "") {
+        formatDollarAmount(this);
+      }
+    });
+  }
+  var startDateInput = document.getElementById("When-did-you-start-your-business");
+  if (startDateInput) {
+    startDateInput.addEventListener("input", function() {
+      formatDate(this);
+    });
+  }
+  document.addEventListener("DOMContentLoaded", function() {
+    loadHubSpotScript();
+    const form = document.getElementById("wf-form-SMB");
+    if (!form) {
+      console.error("Form element not found! Check if the form ID is correct.");
+      return;
+    }
+    const portalId = "19654160";
+    const formId = "e387a024-a165-4d47-956c-23e0e1f6b7eb";
+    function getHubSpotCookie() {
+      var _a;
+      return ((_a = document.cookie.split("; ").find((row) => row.startsWith("hubspotutk="))) == null ? void 0 : _a.split("=")[1]) || "";
+    }
+    function getPageInfo() {
+      return {
+        pageUri: window.location.href,
+        pageName: document.title
+      };
+    }
+    function submitToHubSpot(formData) {
+      return __async(this, null, function* () {
+        const url = `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`;
+        const data = formatFormData(formData);
+        try {
+          if (window._hsq && !window._formStartTracked) {
+            window._hsq.push(["trackEvent", { id: "form_start" }]);
+            window._formStartTracked = true;
+          }
+          const response = yield fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+          });
+          const responseData = yield response.json();
+          if (!response.ok) {
+            console.error("HubSpot Error Details:");
+            console.error("Status:", response.status);
+            console.error("Response Data:", responseData);
+            console.error(
+              "Fields Sent:",
+              data.fields.map((f) => `${f.name}: ${f.value}`)
+            );
+            if (window._hsq) {
+              window._hsq.push([
+                "trackEvent",
+                {
+                  id: "form_submission_error",
+                  value: response.status
+                }
+              ]);
+            }
+            throw new Error(`HubSpot submission failed: ${responseData.message || "Unknown error"}`);
+          }
+          if (window._hsq) {
+            window._hsq.push([
+              "trackConversion",
+              {
+                id: formId
+              }
+            ]);
+            window._hsq.push(["trackEvent", { id: "form_submission_success" }]);
+            window._hsq.push([
+              "identify",
+              {
+                email: formData.get("Email"),
+                firstname: formData.get("First-Name"),
+                lastname: formData.get("Last-Name")
+              }
+            ]);
+          }
+          return responseData;
+        } catch (error) {
+          console.error("Error submitting to HubSpot:", error);
+          throw error;
+        }
+      });
+    }
+    function formatFormData(formData) {
+      const fields = [];
+      const context = __spreadValues({
+        hutk: getHubSpotCookie()
+      }, getPageInfo());
+      const cleanDollarAmount = (value) => {
+        if (!value)
+          return value;
+        return value.replace(/[$,]/g, "").trim();
+      };
+      const fieldMapping = {
+        "First-Name": "firstname",
+        "Last-Name": "lastname",
+        "Email": "email",
+        "Phone": "phone",
+        "Registered-Business-Name": "business_name",
+        "Industry": "industry__dropdown_",
+        "Funding-Amount": "user_reported_desired_amount",
+        "Revenue-per-month": "user_reported_monthly_revenue",
+        "Use-of-funds": "use_of_funds",
+        "Timeline-For-Loan": "when_do_you_need_the_loan_",
+        "When-did-you-start-your-business": "year_founded",
+        "Are-you-an-ecommerce-seller": "ecommerce_seller"
+      };
+      for (const [webflowField, hubspotField] of Object.entries(fieldMapping)) {
+        let value = formData.get(webflowField);
+        if (webflowField === "Industry") {
+          const industrySelect = document.getElementById("Industry");
+          if (industrySelect && industrySelect.value) {
+            value = industrySelect.value;
+          }
+        }
+        if (value && value.trim() !== "") {
+          if (webflowField === "Funding-Amount" || webflowField === "Revenue-per-month") {
+            value = cleanDollarAmount(value);
+          }
+          if (hubspotField === "industry__dropdown_") {
+            fields.push({
+              name: "industry__dropdown_",
+              value: value.trim()
+            });
+          } else {
+            fields.push({
+              name: hubspotField,
+              value: value.trim()
+            });
+          }
+        }
+      }
+      const businessState = document.querySelector(".is-custom-select");
+      if (businessState && businessState.value && businessState.value !== "Business state*") {
+        fields.push({
+          name: "contact_state",
+          value: businessState.value.trim()
+        });
+      }
+      return { fields, context };
+    }
+    const formlySubmitBtn = document.querySelector("#submit");
+    if (formlySubmitBtn) {
+      const trackFormStep = (stepNumber) => {
+        if (window._hsq) {
+          window._hsq.push([
+            "trackEvent",
+            {
+              id: "form_step_complete",
+              value: stepNumber
+            }
+          ]);
+        }
+      };
+      document.querySelectorAll('[data-form="next-btn"]').forEach((btn, index) => {
+        btn.addEventListener("click", () => {
+          trackFormStep(index + 1);
+        });
+      });
+      formlySubmitBtn.addEventListener("click", function(e) {
+        return __async(this, null, function* () {
+          const successMessage = document.querySelector(".w-form-done");
+          const errorMessage = document.querySelector(".w-form-fail");
+          try {
+            const formData = new FormData(form);
+            const result = yield submitToHubSpot(formData);
+          } catch (error) {
+            console.error("HubSpot submission failed:", error);
+            errorMessage.style.display = "block";
+            successMessage.style.display = "none";
+          }
+        });
+      });
+    } else {
+      console.error("Formly submit button not found! Check if the button ID is correct.");
+    }
+  });
+})();
 //# sourceMappingURL=ms-form-route.js.map
