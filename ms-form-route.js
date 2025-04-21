@@ -25,6 +25,27 @@ window.addEventListener("load", function () {
     window._hsq.push(["setPath", window.location.pathname]);
     window._hsq.push(["trackPageView"]);
   }
+
+  // Populate UTM fields from cookie
+  const populateUtmFields = () => {
+    const utmParams = getCookie("PPC Attribution Tracker");
+    if (utmParams && typeof utmParams === "object") {
+      const utmFields = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+      utmFields.forEach((field) => {
+        const input = document.querySelector(`input[name="${field}"]`);
+        if (input && utmParams[field]) {
+          input.value = utmParams[field];
+        }
+      });
+      console.log("UTM fields populated from cookie:", utmParams);
+    }
+  };
+
+  // Try immediately
+  populateUtmFields();
+
+  // Also try after a short delay to ensure all elements are ready
+  setTimeout(populateUtmFields, 1000);
 });
 
 // Load HubSpot Forms Script
