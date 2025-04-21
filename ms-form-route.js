@@ -178,54 +178,32 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Handle form submission
-  console.log("Adding submit event listener to form");
-  form.addEventListener("submit", async function (e) {
-    console.log("Form submit event triggered");
-    e.preventDefault();
-
-    // Update submit button selector to match Formly's ID
-    const submitButton = document.querySelector("#submit");
-    console.log("Submit button found:", submitButton);
-    const successMessage = document.querySelector(".w-form-done");
-    const errorMessage = document.querySelector(".w-form-fail");
-
-    try {
-      console.log("Form submission started...");
-      if (submitButton) {
-        submitButton.value = "Submitting...";
-        submitButton.disabled = true;
-      }
-
-      const formData = new FormData(form);
-      // Log the form data being collected
-      console.log("Form data collected:", Object.fromEntries(formData));
-
-      const result = await submitToHubSpot(formData);
-      console.log("Submission completed successfully");
-
-      // Show success message
-      form.style.display = "none";
-      successMessage.style.display = "block";
-      errorMessage.style.display = "none";
-    } catch (error) {
-      console.error("Form submission failed:", error);
-      // Show error message
-      errorMessage.style.display = "block";
-      successMessage.style.display = "none";
-      if (submitButton) {
-        submitButton.value = "Submit";
-        submitButton.disabled = false;
-      }
-    }
-  });
-
-  // Add additional listener for Formly's submit button click
+  // Instead of form submit listener, use Formly's submit button
   const formlySubmitBtn = document.querySelector("#submit");
   if (formlySubmitBtn) {
     console.log("Found Formly submit button, adding click listener");
-    formlySubmitBtn.addEventListener("click", function (e) {
-      console.log("Formly submit button clicked");
+    formlySubmitBtn.addEventListener("click", async function (e) {
+      console.log("Formly submit button clicked - preparing HubSpot submission");
+
+      const successMessage = document.querySelector(".w-form-done");
+      const errorMessage = document.querySelector(".w-form-fail");
+
+      try {
+        console.log("Starting HubSpot submission process");
+        const formData = new FormData(form);
+        // Log the form data being collected
+        console.log("Form data collected:", Object.fromEntries(formData));
+
+        const result = await submitToHubSpot(formData);
+        console.log("HubSpot submission completed successfully");
+        // Let Formly handle the success UI
+      } catch (error) {
+        console.error("HubSpot submission failed:", error);
+        errorMessage.style.display = "block";
+        successMessage.style.display = "none";
+      }
     });
+  } else {
+    console.error("Formly submit button not found! Check if the button ID is correct.");
   }
 });
