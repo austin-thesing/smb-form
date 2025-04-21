@@ -1,3 +1,24 @@
+// HubSpot tracking initialization
+(function (d, s, i, r) {
+  if (d.getElementById(i)) {
+    return;
+  }
+  var n = d.createElement(s),
+    e = d.getElementsByTagName(s)[0];
+  n.id = i;
+  n.src = "//js.hs-analytics.net/analytics/" + Math.ceil(new Date() / r) * r + "/19654160.js";
+  e.parentNode.insertBefore(n, e);
+})(document, "script", "hs-analytics", 300000);
+
+// Initialize form analytics
+window.addEventListener("load", function () {
+  if (window._hsq) {
+    // Track page view
+    window._hsq.push(["setPath", window.location.pathname]);
+    window._hsq.push(["trackPageView"]);
+  }
+});
+
 console.log("Form handler script loaded");
 
 // Load HubSpot Forms Script
@@ -187,6 +208,12 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Data Structure:", JSON.stringify(data, null, 2));
 
     try {
+      // Track form start if not already tracked
+      if (window._hsq && !window._formStartTracked) {
+        window._hsq.push(["trackEvent", { id: "form_start" }]);
+        window._formStartTracked = true;
+      }
+
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -205,7 +232,32 @@ document.addEventListener("DOMContentLoaded", function () {
           "Fields Sent:",
           data.fields.map((f) => `${f.name}: ${f.value}`)
         );
+
+        // Track form submission failure
+        if (window._hsq) {
+          window._hsq.push([
+            "trackEvent",
+            {
+              id: "form_submission_error",
+              value: response.status,
+            },
+          ]);
+        }
+
         throw new Error(`HubSpot submission failed: ${responseData.message || "Unknown error"}`);
+      }
+
+      // Track successful form submission
+      if (window._hsq) {
+        window._hsq.push(["trackEvent", { id: "form_submission_success" }]);
+        window._hsq.push([
+          "identify",
+          {
+            email: formData.get("Email"),
+            firstname: formData.get("First-Name"),
+            lastname: formData.get("Last-Name"),
+          },
+        ]);
       }
 
       console.log("HubSpot submission successful:", responseData);
@@ -293,6 +345,27 @@ document.addEventListener("DOMContentLoaded", function () {
   const formlySubmitBtn = document.querySelector("#submit");
   if (formlySubmitBtn) {
     console.log("Found Formly submit button, adding click listener");
+
+    // Track form step progression
+    const trackFormStep = (stepNumber) => {
+      if (window._hsq) {
+        window._hsq.push([
+          "trackEvent",
+          {
+            id: "form_step_complete",
+            value: stepNumber,
+          },
+        ]);
+      }
+    };
+
+    // Add step tracking to next buttons
+    document.querySelectorAll('[data-form="next-btn"]').forEach((btn, index) => {
+      btn.addEventListener("click", () => {
+        trackFormStep(index + 1);
+      });
+    });
+
     formlySubmitBtn.addEventListener("click", async function (e) {
       console.log("Formly submit button clicked - preparing HubSpot submission");
 
