@@ -174,11 +174,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Create fields array for HubSpot
     for (const [webflowField, hubspotField] of Object.entries(fieldMapping)) {
-      const value = formData.get(webflowField);
-      if (value) {
+      let value = formData.get(webflowField);
+
+      // Special handling for Industry field
+      if (webflowField === "Industry" && !value) {
+        const industrySelect = document.querySelector('select[name="Industry"]');
+        if (industrySelect) {
+          value = industrySelect.value;
+        }
+      }
+
+      if (value && value.trim() !== "") {
         fields.push({
           name: hubspotField,
-          value: value.trim(), // Ensure no extra whitespace
+          value: value.trim(),
         });
       }
     }
@@ -192,13 +201,11 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    // Ensure required fields have values
-    const requiredFields = ["contact_state", "ecommerce_seller", "industry_dropdown_", "year_founded"];
-    for (const field of requiredFields) {
-      if (!fields.some((f) => f.name === field)) {
-        console.warn(`Missing required field: ${field}`);
-      }
-    }
+    // Log final data for debugging
+    console.log(
+      "Fields being sent to HubSpot:",
+      fields.map((f) => `${f.name}: ${f.value}`)
+    );
 
     return { fields, context };
   }
