@@ -184,15 +184,18 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Form submit event triggered");
     e.preventDefault();
 
-    const submitButton = document.querySelector('[data-form="submit-btn"]');
+    // Update submit button selector to match Formly's ID
+    const submitButton = document.querySelector("#submit");
     console.log("Submit button found:", submitButton);
     const successMessage = document.querySelector(".w-form-done");
     const errorMessage = document.querySelector(".w-form-fail");
 
     try {
       console.log("Form submission started...");
-      submitButton.value = "Submitting...";
-      submitButton.disabled = true;
+      if (submitButton) {
+        submitButton.value = "Submitting...";
+        submitButton.disabled = true;
+      }
 
       const formData = new FormData(form);
       // Log the form data being collected
@@ -210,8 +213,19 @@ document.addEventListener("DOMContentLoaded", function () {
       // Show error message
       errorMessage.style.display = "block";
       successMessage.style.display = "none";
-      submitButton.value = "Submit";
-      submitButton.disabled = false;
+      if (submitButton) {
+        submitButton.value = "Submit";
+        submitButton.disabled = false;
+      }
     }
   });
+
+  // Add additional listener for Formly's submit button click
+  const formlySubmitBtn = document.querySelector("#submit");
+  if (formlySubmitBtn) {
+    console.log("Found Formly submit button, adding click listener");
+    formlySubmitBtn.addEventListener("click", function (e) {
+      console.log("Formly submit button clicked");
+    });
+  }
 });
