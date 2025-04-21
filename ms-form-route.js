@@ -19,6 +19,43 @@
   e.parentNode.insertBefore(n, e);
 })(document, "script", "hs-analytics", 300000);
 
+// Function to get URL parameters
+function getUrlParams() {
+  const params = {};
+  const searchParams = new URLSearchParams(window.location.search);
+  for (const [key, value] of searchParams) {
+    params[key] = value;
+  }
+  return params;
+}
+
+// Function to populate UTM fields in the form
+function populateUtmFields() {
+  const params = getUrlParams();
+  const utmFields = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+
+  utmFields.forEach((field) => {
+    if (params[field]) {
+      // Try to find existing input field
+      let input = document.querySelector(`input[name="${field}"]`);
+
+      // If input doesn't exist, create it
+      if (!input) {
+        input = document.createElement("input");
+        input.type = "hidden";
+        input.name = field;
+        const form = document.getElementById("wf-form-SMB");
+        if (form) {
+          form.appendChild(input);
+        }
+      }
+
+      // Set the value
+      input.value = params[field];
+    }
+  });
+}
+
 // Additional page view tracking on window load
 window.addEventListener("load", function () {
   if (window._hsq) {
@@ -26,26 +63,8 @@ window.addEventListener("load", function () {
     window._hsq.push(["trackPageView"]);
   }
 
-  // Populate UTM fields from cookie
-  const populateUtmFields = () => {
-    const utmParams = getCookie("PPC Attribution Tracker");
-    if (utmParams && typeof utmParams === "object") {
-      const utmFields = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
-      utmFields.forEach((field) => {
-        const input = document.querySelector(`input[name="${field}"]`);
-        if (input && utmParams[field]) {
-          input.value = utmParams[field];
-        }
-      });
-      console.log("UTM fields populated from cookie:", utmParams);
-    }
-  };
-
-  // Try immediately
+  // Populate UTM fields immediately
   populateUtmFields();
-
-  // Also try after a short delay to ensure all elements are ready
-  setTimeout(populateUtmFields, 1000);
 });
 
 // Load HubSpot Forms Script
@@ -304,29 +323,17 @@ document.addEventListener("DOMContentLoaded", function () {
       return value.replace(/[$,]/g, "").trim();
     };
 
-    // Get UTM parameters from existing cookie
-    const utmParams = getCookie("PPC Attribution Tracker");
-    console.log("Raw cookie value for PPC Attribution Tracker:", document.cookie);
-    console.log("Parsed UTM parameters:", utmParams);
-
-    // Add UTM parameters to fields array if they exist
-    if (utmParams && typeof utmParams === "object") {
-      const utmFields = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
-      utmFields.forEach((field) => {
-        if (utmParams[field]) {
-          fields.push({
-            name: field,
-            value: utmParams[field],
-          });
-        }
-      });
-      console.log(
-        "Added UTM fields to HubSpot submission:",
-        fields.filter((f) => f.name.startsWith("utm_"))
-      );
-    } else {
-      console.log("No valid UTM parameters found in cookie");
-    }
+    // Add UTM parameters from form fields to HubSpot submission
+    const utmFields = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+    utmFields.forEach((field) => {
+      const value = formData.get(field);
+      if (value) {
+        fields.push({
+          name: field,
+          value: value.trim(),
+        });
+      }
+    });
 
     // Map form fields to HubSpot fields - only the essential ones
     const fieldMapping = {
