@@ -33,34 +33,12 @@ function formatDate(input) {
   // Remove any non-digit characters
   let value = input.value.replace(/\D/g, "");
 
-  // Only proceed if we have digits
-  if (value.length > 0) {
-    // Handle month (limit to 12)
-    if (value.length >= 2) {
-      let month = parseInt(value.substring(0, 2));
-      if (month > 12) month = 12;
-      if (month < 1) month = 1;
-      month = month.toString().padStart(2, "0");
-
-      // Add day if we have more digits
-      if (value.length > 2) {
-        let day = parseInt(value.substring(2, 4));
-        if (day > 31) day = 31;
-        if (day < 1) day = 1;
-        day = day.toString().padStart(2, "0");
-        value = month + "/" + day;
-      } else {
-        value = month;
-      }
-    }
-
-    // Add slash if exactly 2 digits
-    if (value.length === 2) {
-      value += "/";
-    }
+  // Add slash after first two digits
+  if (value.length > 2) {
+    value = value.slice(0, 2) + "/" + value.slice(2);
   }
 
-  // Limit to MM/DD format
+  // Limit to MM/DD format (5 characters)
   if (value.length > 5) {
     value = value.slice(0, 5);
   }
@@ -76,7 +54,7 @@ console.log("Found dollar inputs:", dollarInputs.length);
 dollarInputs.forEach((input) => {
   console.log("Adding listener to input:", input);
   input.addEventListener("input", function () {
-    console.log("Input event triggered, current value:", this.value);
+    //console.log("Input event triggered, current value:", this.value);
     // Only format if the input is not empty
     if (this.value.trim() !== "") {
       formatDollarAmount(this);
@@ -129,6 +107,47 @@ document.addEventListener("DOMContentLoaded", function () {
     };
   }
 
+  // Submit to HubSpot
+  async function submitToHubSpot(formData) {
+    const url = `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`;
+    const data = formatFormData(formData);
+
+    console.log("HubSpot Submission Details:");
+    console.log("URL:", url);
+    console.log("Portal ID:", portalId);
+    console.log("Form ID:", formId);
+    console.log("Data Structure:", JSON.stringify(data, null, 2));
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        console.error("HubSpot Error Details:");
+        console.error("Status:", response.status);
+        console.error("Response Data:", responseData);
+        console.error(
+          "Fields Sent:",
+          data.fields.map((f) => `${f.name}: ${f.value}`)
+        );
+        throw new Error(`HubSpot submission failed: ${responseData.message || "Unknown error"}`);
+      }
+
+      console.log("HubSpot submission successful:", responseData);
+      return responseData;
+    } catch (error) {
+      console.error("Error submitting to HubSpot:", error);
+      throw error;
+    }
+  }
+
   // Format form data for HubSpot
   function formatFormData(formData) {
     const fields = [];
@@ -144,78 +163,44 @@ document.addEventListener("DOMContentLoaded", function () {
       "Email": "email",
       "Phone": "phone",
       "Registered-Business-Name": "business_name",
-      "Industry": "industry",
+      "Industry": "industry_dropdown_",
       "Funding-Amount": "user_reported_desired_amount",
       "Revenue-per-month": "user_reported_monthly_revenue",
       "Use-of-funds": "use_of_funds",
       "Timeline-For-Loan": "when_do_you_need_the_loan_",
+      "When-did-you-start-your-business": "year_founded",
+      "Are-you-an-ecommerce-seller": "ecommerce_seller",
     };
-
-    console.log("Raw form data entries:", Object.fromEntries(formData));
 
     // Create fields array for HubSpot
     for (const [webflowField, hubspotField] of Object.entries(fieldMapping)) {
       const value = formData.get(webflowField);
       if (value) {
-        console.log(`Mapping ${webflowField} (${value}) to ${hubspotField}`);
         fields.push({
           name: hubspotField,
-          value: value,
+          value: value.trim(), // Ensure no extra whitespace
         });
       }
     }
 
-    // Add business state if present
+    // Add business state with correct HubSpot field name
     const businessState = document.querySelector(".is-custom-select");
     if (businessState && businessState.value && businessState.value !== "Business state*") {
-      console.log(`Adding business state: ${businessState.value}`);
       fields.push({
-        name: "state",
-        value: businessState.value,
+        name: "contact_state",
+        value: businessState.value.trim(),
       });
     }
 
-    const formattedData = { fields, context };
-    console.log("Formatted HubSpot data:", JSON.stringify(formattedData, null, 2));
-    return formattedData;
-  }
-
-  // Submit to HubSpot
-  async function submitToHubSpot(formData) {
-    const url = `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`;
-    const data = formatFormData(formData);
-
-    console.log("Submitting to HubSpot URL:", url);
-    console.log("With data:", JSON.stringify(data, null, 2));
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const responseData = await response.json();
-
-      if (response.ok) {
-        console.log("HubSpot submission successful:", responseData);
-      } else {
-        console.error("HubSpot submission failed:", responseData);
-        console.error("Response status:", response.status);
-        console.error("Response headers:", Object.fromEntries(response.headers));
+    // Ensure required fields have values
+    const requiredFields = ["contact_state", "ecommerce_seller", "industry_dropdown_", "year_founded"];
+    for (const field of requiredFields) {
+      if (!fields.some((f) => f.name === field)) {
+        console.warn(`Missing required field: ${field}`);
       }
-
-      if (!response.ok) {
-        throw new Error(`HubSpot submission failed: ${responseData.message || "Unknown error"}`);
-      }
-
-      return responseData;
-    } catch (error) {
-      console.error("Error submitting to HubSpot:", error);
-      throw error;
     }
+
+    return { fields, context };
   }
 
   // Instead of form submit listener, use Formly's submit button
