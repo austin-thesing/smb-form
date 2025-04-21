@@ -211,8 +211,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       if (value && value.trim() !== "") {
-        // Special handling for industry_dropdown_
-        if (hubspotField === "industry_dropdown_") {
+        // Special handling for industry__dropdown_
+        if (hubspotField === "industry__dropdown_") {
           console.log("Industry value being sent to HubSpot:", value.trim());
           // Ensure the field name matches exactly what HubSpot expects
           fields.push({
