@@ -206,12 +206,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const industrySelect = document.getElementById("Industry");
         if (industrySelect && industrySelect.value) {
           value = industrySelect.value;
+          console.log("Industry value selected:", value);
         }
       }
 
       if (value && value.trim() !== "") {
         // Special handling for industry_dropdown_
         if (hubspotField === "industry_dropdown_") {
+          console.log("Industry value being sent to HubSpot:", value.trim());
           // Ensure the field name matches exactly what HubSpot expects
           fields.push({
             name: "industry_dropdown_",
