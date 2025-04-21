@@ -1,3 +1,5 @@
+console.log("Form handler script loaded");
+
 // Load HubSpot Forms Script
 function loadHubSpotScript() {
   const script = document.createElement("script");
@@ -50,10 +52,18 @@ dollarInputs.forEach((input) => {
 
 // HubSpot form submission handler
 document.addEventListener("DOMContentLoaded", function () {
+  console.log("DOM Content Loaded");
+
   // Load HubSpot Forms script
   loadHubSpotScript();
 
   const form = document.getElementById("wf-form-SMB");
+  console.log("Found form element:", form);
+
+  if (!form) {
+    console.error("Form element not found! Check if the form ID is correct.");
+    return;
+  }
 
   // HubSpot form configuration
   const portalId = "19654160"; // Your HubSpot portal ID
@@ -169,10 +179,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Handle form submission
+  console.log("Adding submit event listener to form");
   form.addEventListener("submit", async function (e) {
+    console.log("Form submit event triggered");
     e.preventDefault();
 
     const submitButton = document.querySelector('[data-form="submit-btn"]');
+    console.log("Submit button found:", submitButton);
     const successMessage = document.querySelector(".w-form-done");
     const errorMessage = document.querySelector(".w-form-fail");
 
