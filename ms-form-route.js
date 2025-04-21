@@ -136,6 +136,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const url = `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`;
     const data = formatFormData(formData);
 
+    // Log the data being sent to HubSpot
+    console.log("Submitting to HubSpot with data:", data);
+
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -145,11 +148,20 @@ document.addEventListener("DOMContentLoaded", function () {
         body: JSON.stringify(data),
       });
 
+      const responseData = await response.json();
+
+      // Log the response from HubSpot
+      if (response.ok) {
+        console.log("HubSpot submission successful:", responseData);
+      } else {
+        console.error("HubSpot submission failed:", responseData);
+      }
+
       if (!response.ok) {
         throw new Error("HubSpot submission failed");
       }
 
-      return await response.json();
+      return responseData;
     } catch (error) {
       console.error("Error submitting to HubSpot:", error);
       throw error;
@@ -165,17 +177,23 @@ document.addEventListener("DOMContentLoaded", function () {
     const errorMessage = document.querySelector(".w-form-fail");
 
     try {
+      console.log("Form submission started...");
       submitButton.value = "Submitting...";
       submitButton.disabled = true;
 
       const formData = new FormData(form);
-      await submitToHubSpot(formData);
+      // Log the form data being collected
+      console.log("Form data collected:", Object.fromEntries(formData));
+
+      const result = await submitToHubSpot(formData);
+      console.log("Submission completed successfully");
 
       // Show success message
       form.style.display = "none";
       successMessage.style.display = "block";
       errorMessage.style.display = "none";
     } catch (error) {
+      console.error("Form submission failed:", error);
       // Show error message
       errorMessage.style.display = "block";
       successMessage.style.display = "none";
