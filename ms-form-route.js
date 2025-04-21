@@ -13,8 +13,16 @@ function formatDollarAmount(input) {
   // Remove any non-digit characters
   let value = input.value.replace(/\D/g, "");
 
+  // Convert to number
+  let numValue = parseInt(value);
+
+  // Limit to 2 million
+  if (numValue > 2000000) {
+    numValue = 2000000;
+  }
+
   // Format the number with commas and no cents
-  value = Number(value).toLocaleString("en-US", {
+  value = numValue.toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 0,
@@ -177,18 +185,27 @@ document.addEventListener("DOMContentLoaded", function () {
       let value = formData.get(webflowField);
 
       // Special handling for Industry field
-      if (webflowField === "Industry" && !value) {
-        const industrySelect = document.querySelector('select[name="Industry"]');
-        if (industrySelect) {
+      if (webflowField === "Industry") {
+        const industrySelect = document.getElementById("Industry");
+        if (industrySelect && industrySelect.value) {
           value = industrySelect.value;
         }
       }
 
       if (value && value.trim() !== "") {
-        fields.push({
-          name: hubspotField,
-          value: value.trim(),
-        });
+        // Special handling for industry_dropdown_
+        if (hubspotField === "industry_dropdown_") {
+          // Ensure the field name matches exactly what HubSpot expects
+          fields.push({
+            name: "industry_dropdown_",
+            value: value.trim(),
+          });
+        } else {
+          fields.push({
+            name: hubspotField,
+            value: value.trim(),
+          });
+        }
       }
     }
 
