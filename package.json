@@ -6,12 +6,13 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production rimraf dist && esbuild ms-form-route.js --bundle --minify --sourcemap --target=es2015 --outfile=dist/ms-form-route.js",
     "build:prod": "cross-env NODE_ENV=production rimraf dist && esbuild ms-form-route.js --bundle --minify --sourcemap=external --target=es2015 --drop:console --drop:debugger --legal-comments=none --outfile=dist/ms-form-route.js",
-    "watch": "esbuild ms-form-route.js --bundle --sourcemap --target=es2015 --outfile=dist/ms-form-route.js --watch"
+    "watch": "cross-env NODE_ENV=production esbuild ms-form-route.js --bundle --minify --sourcemap=external --target=es2015 --drop:console --drop:debugger --legal-comments=none --outfile=dist/ms-form-route.js --watch"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
     "esbuild": "^0.20.1",
     "nodemon": "^3.1.0",
+    "prettier": "^3.5.3",
     "rimraf": "^5.0.5"
   }
 }
