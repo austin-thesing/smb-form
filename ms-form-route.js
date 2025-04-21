@@ -169,6 +169,23 @@ document.addEventListener("DOMContentLoaded", function () {
     };
   }
 
+  // Function to get and parse cookie value
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      let cookieValue = parts.pop().split(";").shift();
+      try {
+        // Try to parse as JSON
+        return JSON.parse(decodeURIComponent(cookieValue));
+      } catch (e) {
+        // If not JSON, return as is
+        return cookieValue;
+      }
+    }
+    return null;
+  }
+
   // Submit to HubSpot
   async function submitToHubSpot(formData) {
     const url = `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`;
@@ -267,40 +284,27 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     // Get UTM parameters from existing cookie
-    const utmParams = getCookie("PPC Attribution Tracker") || {};
+    const utmParams = getCookie("PPC Attribution Tracker");
+    console.log("Raw cookie value for PPC Attribution Tracker:", document.cookie);
+    console.log("Parsed UTM parameters:", utmParams);
 
-    // Add UTM parameters to fields array
-    if (utmParams) {
-      if (utmParams.utm_campaign) {
-        fields.push({
-          name: "utm_campaign",
-          value: utmParams.utm_campaign,
-        });
-      }
-      if (utmParams.utm_source) {
-        fields.push({
-          name: "utm_source",
-          value: utmParams.utm_source,
-        });
-      }
-      if (utmParams.utm_medium) {
-        fields.push({
-          name: "utm_medium",
-          value: utmParams.utm_medium,
-        });
-      }
-      if (utmParams.utm_term) {
-        fields.push({
-          name: "utm_term",
-          value: utmParams.utm_term,
-        });
-      }
-      if (utmParams.utm_content) {
-        fields.push({
-          name: "utm_content",
-          value: utmParams.utm_content,
-        });
-      }
+    // Add UTM parameters to fields array if they exist
+    if (utmParams && typeof utmParams === "object") {
+      const utmFields = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+      utmFields.forEach((field) => {
+        if (utmParams[field]) {
+          fields.push({
+            name: field,
+            value: utmParams[field],
+          });
+        }
+      });
+      console.log(
+        "Added UTM fields to HubSpot submission:",
+        fields.filter((f) => f.name.startsWith("utm_"))
+      );
+    } else {
+      console.log("No valid UTM parameters found in cookie");
     }
 
     // Map form fields to HubSpot fields - only the essential ones
