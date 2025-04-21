@@ -10,11 +10,8 @@ function loadHubSpotScript() {
 
 // Function to format input as dollar amount
 function formatDollarAmount(input) {
-  console.log("Initial input value:", input.value);
-
   // Remove any non-digit characters
   let value = input.value.replace(/\D/g, "");
-  console.log("After removing non-digits:", value);
 
   // Format the number with commas and no cents
   value = Number(value).toLocaleString("en-US", {
@@ -23,15 +20,52 @@ function formatDollarAmount(input) {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   });
-  console.log("After formatting:", value);
 
   // Remove the currency symbol (we'll add it manually to preserve cursor position)
   value = value.replace(/^\$/, "");
-  console.log("After removing $ symbol:", value);
 
   // Update the input value
   input.value = "$" + value;
-  console.log("Final formatted value:", input.value);
+}
+
+// Function to format date as MM/DD
+function formatDate(input) {
+  // Remove any non-digit characters
+  let value = input.value.replace(/\D/g, "");
+
+  // Only proceed if we have digits
+  if (value.length > 0) {
+    // Handle month (limit to 12)
+    if (value.length >= 2) {
+      let month = parseInt(value.substring(0, 2));
+      if (month > 12) month = 12;
+      if (month < 1) month = 1;
+      month = month.toString().padStart(2, "0");
+
+      // Add day if we have more digits
+      if (value.length > 2) {
+        let day = parseInt(value.substring(2, 4));
+        if (day > 31) day = 31;
+        if (day < 1) day = 1;
+        day = day.toString().padStart(2, "0");
+        value = month + "/" + day;
+      } else {
+        value = month;
+      }
+    }
+
+    // Add slash if exactly 2 digits
+    if (value.length === 2) {
+      value += "/";
+    }
+  }
+
+  // Limit to MM/DD format
+  if (value.length > 5) {
+    value = value.slice(0, 5);
+  }
+
+  input.value = value;
 }
 
 // Find all inputs with data-type="dollar"
@@ -49,6 +83,14 @@ dollarInputs.forEach((input) => {
     }
   });
 });
+
+// Add date formatting to business start date input
+const startDateInput = document.getElementById("When-did-you-start-your-business");
+if (startDateInput) {
+  startDateInput.addEventListener("input", function () {
+    formatDate(this);
+  });
+}
 
 // HubSpot form submission handler
 document.addEventListener("DOMContentLoaded", function () {
@@ -84,7 +126,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return {
       pageUri: window.location.href,
       pageName: document.title,
-      pageId: document.querySelector("[data-wf-page-id]")?.getAttribute("data-wf-page-id") || "",
     };
   }
 
@@ -93,32 +134,30 @@ document.addEventListener("DOMContentLoaded", function () {
     const fields = [];
     const context = {
       hutk: getHubSpotCookie(),
-      pageUri: getPageInfo().pageUri,
-      pageName: getPageInfo().pageName,
-      pageId: getPageInfo().pageId,
-      ipAddress: document.querySelector('input[name="ipAddress"]').value,
+      ...getPageInfo(),
     };
 
-    // Map form fields to HubSpot fields
+    // Map form fields to HubSpot fields - only the essential ones
     const fieldMapping = {
-      "Funding-Amount": "user_reported_desired_amount",
-      "Revenue-per-month": "user_reported_monthly_revenue",
-      "Use-of-funds": "use_of_funds",
-      "Timeline-For-Loan": "when_do_you_need_the_loan_",
       "First-Name": "firstname",
       "Last-Name": "lastname",
       "Email": "email",
       "Phone": "phone",
       "Registered-Business-Name": "business_name",
-      "When-did-you-start-your-business": "year_founded",
-      "Are-you-an-ecommerce-seller": "ecommerce_seller",
       "Industry": "industry",
+      "Funding-Amount": "user_reported_desired_amount",
+      "Revenue-per-month": "user_reported_monthly_revenue",
+      "Use-of-funds": "use_of_funds",
+      "Timeline-For-Loan": "when_do_you_need_the_loan_",
     };
+
+    console.log("Raw form data entries:", Object.fromEntries(formData));
 
     // Create fields array for HubSpot
     for (const [webflowField, hubspotField] of Object.entries(fieldMapping)) {
       const value = formData.get(webflowField);
       if (value) {
+        console.log(`Mapping ${webflowField} (${value}) to ${hubspotField}`);
         fields.push({
           name: hubspotField,
           value: value,
@@ -126,19 +165,19 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    // Add business state separately since it has a custom select
-    const businessState = document.querySelector(".is-custom-select").value;
-    if (businessState && businessState !== "Business state*") {
+    // Add business state if present
+    const businessState = document.querySelector(".is-custom-select");
+    if (businessState && businessState.value && businessState.value !== "Business state*") {
+      console.log(`Adding business state: ${businessState.value}`);
       fields.push({
         name: "state",
-        value: businessState,
+        value: businessState.value,
       });
     }
 
-    return {
-      fields,
-      context,
-    };
+    const formattedData = { fields, context };
+    console.log("Formatted HubSpot data:", JSON.stringify(formattedData, null, 2));
+    return formattedData;
   }
 
   // Submit to HubSpot
@@ -146,8 +185,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const url = `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`;
     const data = formatFormData(formData);
 
-    // Log the data being sent to HubSpot
-    console.log("Submitting to HubSpot with data:", data);
+    console.log("Submitting to HubSpot URL:", url);
+    console.log("With data:", JSON.stringify(data, null, 2));
 
     try {
       const response = await fetch(url, {
@@ -160,15 +199,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const responseData = await response.json();
 
-      // Log the response from HubSpot
       if (response.ok) {
         console.log("HubSpot submission successful:", responseData);
       } else {
         console.error("HubSpot submission failed:", responseData);
+        console.error("Response status:", response.status);
+        console.error("Response headers:", Object.fromEntries(response.headers));
       }
 
       if (!response.ok) {
-        throw new Error("HubSpot submission failed");
+        throw new Error(`HubSpot submission failed: ${responseData.message || "Unknown error"}`);
       }
 
       return responseData;
