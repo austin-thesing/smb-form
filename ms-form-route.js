@@ -19,8 +19,6 @@ window.addEventListener("load", function () {
   }
 });
 
-console.log("Form handler script loaded");
-
 // Load HubSpot Forms Script
 function loadHubSpotScript() {
   const script = document.createElement("script");
@@ -100,17 +98,25 @@ function formatDollarAmountUncapped(input) {
   input.value = "$" + value;
 }
 
-// Function to format date as MM/DD
+// Function to format date as MM/YY with validation
 function formatDate(input) {
   // Remove any non-digit characters
   let value = input.value.replace(/\D/g, "");
+
+  // Handle month validation
+  if (value.length >= 2) {
+    let month = parseInt(value.slice(0, 2));
+    if (month === 0) month = 1;
+    if (month > 12) month = 12;
+    value = month.toString().padStart(2, "0") + value.slice(2);
+  }
 
   // Add slash after first two digits
   if (value.length > 2) {
     value = value.slice(0, 2) + "/" + value.slice(2);
   }
 
-  // Limit to MM/DD format (5 characters)
+  // Limit to MM/YY format (5 characters)
   if (value.length > 5) {
     value = value.slice(0, 5);
   }
@@ -131,12 +137,12 @@ dollarInputs.forEach((input) => {
   }
 });
 
-// Handle Funding-Amount input with cap
+// Handle Funding-Amount input without cap
 const fundingInput = document.getElementById("Funding-Amount");
 if (fundingInput) {
   fundingInput.addEventListener("input", function () {
     if (this.value.trim() !== "") {
-      formatDollarAmount(this);
+      formatDollarAmountUncapped(this);
     }
   });
 }
@@ -161,13 +167,13 @@ if (startDateInput) {
 
 // HubSpot form submission handler
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("DOM Content Loaded");
+  // console.log("DOM Content Loaded");
 
   // Load HubSpot Forms script
   loadHubSpotScript();
 
   const form = document.getElementById("wf-form-SMB");
-  console.log("Found form element:", form);
+  // console.log("Found form element:", form);
 
   if (!form) {
     console.error("Form element not found! Check if the form ID is correct.");
@@ -201,11 +207,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const url = `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`;
     const data = formatFormData(formData);
 
-    console.log("HubSpot Submission Details:");
-    console.log("URL:", url);
-    console.log("Portal ID:", portalId);
-    console.log("Form ID:", formId);
-    console.log("Data Structure:", JSON.stringify(data, null, 2));
+    // console.log("HubSpot Submission Details:");
+    // console.log("URL:", url);
+    // console.log("Portal ID:", portalId);
+    // console.log("Form ID:", formId);
+    // console.log("Data Structure:", JSON.stringify(data, null, 2));
 
     try {
       // Track form start if not already tracked
@@ -260,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function () {
         ]);
       }
 
-      console.log("HubSpot submission successful:", responseData);
+      // console.log("HubSpot submission successful:", responseData);
       return responseData;
     } catch (error) {
       console.error("Error submitting to HubSpot:", error);
@@ -274,6 +280,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const context = {
       hutk: getHubSpotCookie(),
       ...getPageInfo(),
+    };
+
+    // Helper function to clean dollar amounts
+    const cleanDollarAmount = (value) => {
+      if (!value) return value;
+      return value.replace(/[$,]/g, "").trim();
     };
 
     // Map form fields to HubSpot fields - only the essential ones
@@ -301,15 +313,17 @@ document.addEventListener("DOMContentLoaded", function () {
         const industrySelect = document.getElementById("Industry");
         if (industrySelect && industrySelect.value) {
           value = industrySelect.value;
-          console.log("Industry value selected:", value);
         }
       }
 
       if (value && value.trim() !== "") {
+        // Clean dollar amounts for specific fields
+        if (webflowField === "Funding-Amount" || webflowField === "Revenue-per-month") {
+          value = cleanDollarAmount(value);
+        }
+
         // Special handling for industry__dropdown_
         if (hubspotField === "industry__dropdown_") {
-          console.log("Industry value being sent to HubSpot:", value.trim());
-          // Ensure the field name matches exactly what HubSpot expects
           fields.push({
             name: "industry__dropdown_",
             value: value.trim(),
@@ -333,10 +347,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Log final data for debugging
-    console.log(
-      "Fields being sent to HubSpot:",
-      fields.map((f) => `${f.name}: ${f.value}`)
-    );
+    // console.log(
+    //   "Fields being sent to HubSpot:",
+    //   fields.map((f) => `${f.name}: ${f.value}`)
+    // );
 
     return { fields, context };
   }
@@ -344,7 +358,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Instead of form submit listener, use Formly's submit button
   const formlySubmitBtn = document.querySelector("#submit");
   if (formlySubmitBtn) {
-    console.log("Found Formly submit button, adding click listener");
+    // console.log("Found Formly submit button, adding click listener");
 
     // Track form step progression
     const trackFormStep = (stepNumber) => {
@@ -367,19 +381,18 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     formlySubmitBtn.addEventListener("click", async function (e) {
-      console.log("Formly submit button clicked - preparing HubSpot submission");
+      // console.log("Formly submit button clicked - preparing HubSpot submission");
 
       const successMessage = document.querySelector(".w-form-done");
       const errorMessage = document.querySelector(".w-form-fail");
 
       try {
-        console.log("Starting HubSpot submission process");
+        // console.log("Starting HubSpot submission process");
         const formData = new FormData(form);
-        // Log the form data being collected
-        console.log("Form data collected:", Object.fromEntries(formData));
+        // console.log("Form data collected:", Object.fromEntries(formData));
 
         const result = await submitToHubSpot(formData);
-        console.log("HubSpot submission completed successfully");
+        // console.log("HubSpot submission completed successfully");
         // Let Formly handle the success UI
       } catch (error) {
         console.error("HubSpot submission failed:", error);
