@@ -134,53 +134,46 @@ function formatDate(input) {
   input.value = value;
 }
 
+// Find all inputs with data-type="dollar"
+const dollarInputs = document.querySelectorAll('input[data-type="dollar"]');
+dollarInputs.forEach((input) => {
+  input.addEventListener("input", function () {
+    if (this.value.trim() !== "") {
+      formatDollarAmount(this);
+    }
+  });
+});
+
+// Handle Funding-Amount input
+const fundingInput = document.getElementById("Funding-Amount");
+if (fundingInput) {
+  fundingInput.addEventListener("input", function () {
+    if (this.value.trim() !== "") {
+      formatDollarAmount(this);
+    }
+  });
+}
+
+// Handle Revenue-per-month input
+const revenueInput = document.getElementById("Revenue-per-month");
+if (revenueInput) {
+  revenueInput.addEventListener("input", function () {
+    if (this.value.trim() !== "") {
+      formatDollarAmount(this);
+    }
+  });
+}
+
+// Add date formatting to business start date input
+const startDateInput = document.getElementById("When-did-you-start-your-business");
+if (startDateInput) {
+  startDateInput.addEventListener("input", function () {
+    formatDate(this);
+  });
+}
+
 // HubSpot form submission handler
 document.addEventListener("DOMContentLoaded", function () {
-  // Initialize dollar formatting
-  console.log("Setting up dollar formatting...");
-
-  // Find all inputs with data-type="dollar"
-  const dollarInputs = document.querySelectorAll('input[data-type="dollar"]');
-  console.log("Found dollar inputs:", dollarInputs.length);
-
-  dollarInputs.forEach((input) => {
-    input.addEventListener("input", function () {
-      if (this.value.trim() !== "") {
-        formatDollarAmount(this);
-      }
-    });
-  });
-
-  // Handle Funding-Amount input
-  const fundingInput = document.getElementById("Funding-Amount");
-  if (fundingInput) {
-    console.log("Found Funding-Amount input");
-    fundingInput.addEventListener("input", function () {
-      if (this.value.trim() !== "") {
-        formatDollarAmount(this);
-      }
-    });
-  }
-
-  // Handle Revenue-per-month input
-  const revenueInput = document.getElementById("Revenue-per-month");
-  if (revenueInput) {
-    console.log("Found Revenue-per-month input");
-    revenueInput.addEventListener("input", function () {
-      if (this.value.trim() !== "") {
-        formatDollarAmount(this);
-      }
-    });
-  }
-
-  // Add date formatting to business start date input
-  const startDateInput = document.getElementById("When-did-you-start-your-business");
-  if (startDateInput) {
-    startDateInput.addEventListener("input", function () {
-      formatDate(this);
-    });
-  }
-
   // Load HubSpot Forms script
   loadHubSpotScript();
 
