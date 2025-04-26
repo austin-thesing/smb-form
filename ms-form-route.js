@@ -337,6 +337,9 @@ document.addEventListener("DOMContentLoaded", function () {
       ...getPageInfo(),
     };
 
+    // Debug logging for ecommerce seller field
+    console.log("Raw form data for ecommerce seller:", formData.get("Are-you-an-ecommerce-seller"));
+
     // Helper function to clean dollar amounts
     const cleanDollarAmount = (value) => {
       if (!value) return value;
@@ -374,6 +377,15 @@ document.addEventListener("DOMContentLoaded", function () {
     // Create fields array for HubSpot
     for (const [webflowField, hubspotField] of Object.entries(fieldMapping)) {
       let value = formData.get(webflowField);
+
+      // Debug logging for field mapping
+      if (webflowField === "Are-you-an-ecommerce-seller") {
+        console.log("Ecommerce seller field mapping:", {
+          webflowField,
+          hubspotField,
+          value,
+        });
+      }
 
       // Special handling for Industry field
       if (webflowField === "Industry") {
@@ -413,11 +425,11 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    // Log final data for debugging
-    // console.log(
-    //   "Fields being sent to HubSpot:",
-    //   fields.map((f) => `${f.name}: ${f.value}`)
-    // );
+    // Log final data structure before submission
+    console.log("Final HubSpot submission fields:", {
+      allFields: fields,
+      ecommerceField: fields.find((f) => f.name === "ecommerce_seller"),
+    });
 
     return { fields, context };
   }
