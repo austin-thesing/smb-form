@@ -1,3 +1,5 @@
+import "./ecommerce-redirect.js";
+
 // HubSpot tracking initialization
 (function (d, s, i, r) {
   if (d.getElementById(i)) {
