@@ -43,9 +43,15 @@ npm run build:prod
 
 ```
 smb-form/
-├── dist/           # Compiled output
-├── ms-form-route.js # Main entry point
-└── package.json    # Project configuration and dependencies
+├── .vscode/        # VS Code editor configuration
+├── dist/           # Compiled output files
+├── src/            # Source code for the application
+│   └── ms-form-route.js # Main entry point
+│   └── ecommerce-redirect.js # ecommerce seller redirect handler
+├── package-lock.json # Records exact versions of dependencies
+├── package.json    # Project manifest: configuration, dependencies, scripts
+├── plan.md         # Project planning document (if applicable)
+└── README.md       # This file: project overview and instructions
 ```
 
 ## Dependencies
