@@ -1,3 +1,5 @@
+import "./ecommerce-redirect.js";
+
 // HubSpot tracking initialization
 (function (d, s, i, r) {
   if (d.getElementById(i)) {
@@ -372,6 +374,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "Timeline-For-Loan": "when_do_you_need_the_loan_",
       "When-did-you-start-your-business": "year_founded",
       "Are-You-An-Ecommerce-Seller": "ecommerce_seller",
+      "Do-you-have-a-business-bank-account": "business_bank_account",
     };
 
     // Create fields array for HubSpot
