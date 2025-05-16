@@ -4,9 +4,15 @@
   "description": "SMB Form with HubSpot integration",
   "main": "src/ms-form-route.js",
   "scripts": {
-    "build": "cross-env NODE_ENV=production rimraf dist && esbuild src/ms-form-route.js --bundle --minify --sourcemap --target=es2015 --outfile=dist/ms-form-route.js",
-    "build:prod": "cross-env NODE_ENV=production rimraf dist && esbuild src/ms-form-route.js --bundle --minify --sourcemap=external --target=es2015 --drop:console --drop:debugger --legal-comments=none --outfile=dist/ms-form-route.js",
-    "watch": "cross-env NODE_ENV=production esbuild src/ms-form-route.js --bundle --minify --sourcemap=external --target=es2015 --drop:console --drop:debugger --legal-comments=none --outfile=dist/ms-form-route.js --watch"
+    "build": "cross-env NODE_ENV=production rimraf dist && npm run build:core && npm run build:main-form",
+    "build:core": "esbuild src/ms-form-route.js --bundle --minify --sourcemap --target=es2015 --outfile=dist/ms-form-route.js",
+    "build:main-form": "esbuild src/main-form/ms-form-route.js --bundle --minify --sourcemap --target=es2015 --outfile=dist/main-form/ms-form-route.js",
+    "build:prod": "cross-env NODE_ENV=production rimraf dist && npm run build:core:prod && npm run build:main-form:prod",
+    "build:core:prod": "esbuild src/ms-form-route.js --bundle --minify --sourcemap=external --target=es2015 --drop:console --drop:debugger --legal-comments=none --outfile=dist/ms-form-route.js",
+    "build:main-form:prod": "esbuild src/main-form/ms-form-route.js --bundle --minify --sourcemap=external --target=es2015 --drop:console --drop:debugger --legal-comments=none --outfile=dist/main-form/ms-form-route.js",
+    "watch": "npm-run-all --parallel watch:core watch:main-form",
+    "watch:core": "esbuild src/ms-form-route.js --bundle --minify --sourcemap=external --target=es2015 --outfile=dist/ms-form-route.js --watch",
+    "watch:main-form": "esbuild src/main-form/ms-form-route.js --bundle --minify --sourcemap=external --target=es2015 --outfile=dist/main-form/ms-form-route.js --watch"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
