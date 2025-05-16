@@ -1,73 +1,56 @@
-# SMB Form
+# Multi-Form Build System
 
-A form integration solution for small and medium businesses (SMB) with HubSpot integration capabilities.
-
-## Overview
-
-This project provides a form routing solution that integrates with HubSpot, allowing businesses to collect and process form submissions efficiently. The main entry point is `ms-form-route.js` which handles form submissions and routing.
-
-## Prerequisites
-
-- Node.js (LTS version recommended)
-- npm or yarn package manager
-
-## Installation
-
-```bash
-# Install dependencies
-npm install
-```
-
-## Development
-
-The project uses esbuild for bundling and provides several npm scripts for development:
-
-```bash
-# Start development watch mode
-npm run watch
-
-# Build for development
-npm run build
-
-# Build for production
-npm run build:prod
-```
-
-### Build Scripts
-
-- `build`: Creates a development build with source maps
-- `build:prod`: Creates a minified production build with external source maps and removes console logs
-- `watch`: Watches for changes and rebuilds automatically (production settings)
+This project allows building multiple versions of forms with different configurations while maintaining a single source of core logic.
 
 ## Project Structure
 
 ```
-smb-form/
-├── .vscode/        # VS Code editor configuration
-├── dist/           # Compiled output files
-├── src/            # Source code for the application
-│   └── ms-form-route.js # Main entry point
-│   └── ecommerce-redirect.js # ecommerce seller redirect handler
-├── package-lock.json # Records exact versions of dependencies
-├── package.json    # Project manifest: configuration, dependencies, scripts
-├── plan.md         # Project planning document (if applicable)
-└── README.md       # This file: project overview and instructions
+src/
+  core/               # Core form logic
+    ms-form-route.js  # Main form handling logic
+    ecommerce-redirect.js
+  configs/            # Form configurations
+    smb-form/         # SMB form configuration
+      config.json
+    other-form/       # Other form configurations
+      config.json
 ```
 
-## Dependencies
+## Configuration
 
-### Development Dependencies
+Each form version needs a configuration file (`config.json`) in its directory under `src/configs/`. The configuration file should contain:
 
-- `cross-env`: ^7.0.3 - Cross-platform environment variable setting
-- `esbuild`: ^0.20.1 - Fast JavaScript bundler
-- `nodemon`: ^3.1.0 - Development auto-reloader
-- `prettier`: ^3.5.3 - Code formatter
-- `rimraf`: ^5.0.5 - Cross-platform file removal utility
+```json
+{
+  "webflowFormId": "YOUR_WEBFLOW_FORM_ID",
+  "hubspotFormId": "YOUR_HUBSPOT_FORM_ID",
+  "redirectBaseUrl": "YOUR_REDIRECT_BASE_URL",
+  "formName": "form-name"
+}
+```
 
-## License
+## Building
 
-[Add your license information here]
+The build system will create separate builds for each configuration in the `dist` directory:
 
-## Contributing
+```
+dist/
+  smb-form/
+    ms-form-route.js
+  other-form/
+    ms-form-route.js
+```
 
-[Add contribution guidelines here]
+### Commands
+
+- `npm run build` - Development build
+- `npm run build:prod` - Production build (minified, no console logs)
+- `npm run watch` - Watch mode for development
+
+## Adding a New Form
+
+1. Create a new directory under `src/configs/` with your form name
+2. Add a `config.json` file with your form's configuration
+3. Run the build command
+
+The build system will automatically create a new build for your form in the `dist` directory.

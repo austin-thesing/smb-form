@@ -1,3 +1,6 @@
+// Get config from build process
+const config = process.env.CONFIG;
+
 import "./ecommerce-redirect.js";
 
 // HubSpot tracking initialization
@@ -46,7 +49,7 @@ function populateUtmFields() {
         input = document.createElement("input");
         input.type = "hidden";
         input.name = field;
-        const form = document.getElementById("wf-form-SMB");
+        const form = document.getElementById(config.webflowFormId);
         if (form) {
           form.appendChild(input);
         }
@@ -179,7 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Load HubSpot Forms script
   loadHubSpotScript();
 
-  const form = document.getElementById("wf-form-SMB");
+  const form = document.getElementById(config.webflowFormId);
 
   if (!form) {
     console.error("Form element not found! Check if the form ID is correct.");
@@ -197,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
         window._hsq.push([
           "trackForms",
           {
-            formId: "e387a024-a165-4d47-956c-23e0e1f6b7eb",
+            formId: config.hubspotFormId,
             formInstanceId: form.getAttribute("data-form-instance-id") || "1",
           },
         ]);
@@ -209,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // HubSpot form configuration
   const portalId = "19654160";
-  const formId = "e387a024-a165-4d47-956c-23e0e1f6b7eb";
+  const formId = config.hubspotFormId;
 
   // Get HubSpot tracking cookie
   function getHubSpotCookie() {

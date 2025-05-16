@@ -1,7 +1,10 @@
+// Get config from build process
+const config = process.env.CONFIG;
+
 // E-commerce redirect logic will go here
 
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("wf-form-SMB");
+  const form = document.getElementById(config.webflowFormId);
   const ecommerceSellerSelect = document.getElementById("Are-you-an-ecommerce-seller");
   const fundingAmountInput = document.getElementById("Funding-Amount");
   const avgMonthlySalesInput = document.getElementById("Revenue-per-month");
@@ -57,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
         params.append("marketing_survey_upsert_survey_form[funding_reason]", fundingReason);
       }
 
-      const redirectUrl = `https://app.onrampfunds.com/smb-signup?${params.toString()}`;
+      const redirectUrl = `${config.redirectBaseUrl}?${params.toString()}`;
       console.log("Redirecting to:", redirectUrl); // For debugging
       window.location.href = redirectUrl;
     }

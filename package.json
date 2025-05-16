@@ -2,11 +2,11 @@
   "name": "smb-form",
   "version": "1.0.0",
   "description": "SMB Form with HubSpot integration",
-  "main": "src/ms-form-route.js",
+  "main": "src/core/ms-form-route.js",
   "scripts": {
-    "build": "cross-env NODE_ENV=production rimraf dist && esbuild src/ms-form-route.js --bundle --minify --sourcemap --target=es2015 --outfile=dist/ms-form-route.js",
-    "build:prod": "cross-env NODE_ENV=production rimraf dist && esbuild src/ms-form-route.js --bundle --minify --sourcemap=external --target=es2015 --drop:console --drop:debugger --legal-comments=none --outfile=dist/ms-form-route.js",
-    "watch": "cross-env NODE_ENV=production esbuild src/ms-form-route.js --bundle --minify --sourcemap=external --target=es2015 --drop:console --drop:debugger --legal-comments=none --outfile=dist/ms-form-route.js --watch"
+    "build": "cross-env NODE_ENV=development node build.js",
+    "build:prod": "cross-env NODE_ENV=production node build.js",
+    "watch": "nodemon --watch src --ext js,json --exec \"npm run build\""
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
