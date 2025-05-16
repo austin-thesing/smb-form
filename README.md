@@ -24,8 +24,7 @@ Each form version needs a configuration file (`config.json`) in its directory un
 {
   "webflowFormId": "YOUR_WEBFLOW_FORM_ID",
   "hubspotFormId": "YOUR_HUBSPOT_FORM_ID",
-  "redirectBaseUrl": "YOUR_REDIRECT_BASE_URL",
-  "formName": "form-name"
+  "redirectBaseUrl": "YOUR_REDIRECT_BASE_URL"
 }
 ```
 

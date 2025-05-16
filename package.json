@@ -1,5 +1,5 @@
 {
-  "name": "smb-form",
+  "name": "forms-builder",
   "version": "1.0.0",
   "description": "SMB Form with HubSpot integration",
   "main": "src/core/ms-form-route.js",
