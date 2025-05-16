@@ -369,10 +369,10 @@ document.addEventListener("DOMContentLoaded", function () {
       "Registered-Business-Name": "business_name",
       "Industry": "industry__dropdown_",
       "Funding-Amount": "user_reported_desired_amount",
-      "Revenue-per-month": "user_reported_monthly_revenue",
-      "Use-of-funds": "use_of_funds",
+      "Revenue-Per-Month": "user_reported_monthly_revenue",
+      "Use-Of-Funds": "use_of_funds",
       "Timeline-For-Loan": "when_do_you_need_the_loan_",
-      "When-did-you-start-your-business": "year_founded",
+      "When-Did-You-Start-Your-Business": "year_founded",
       "Are-you-an-ecommerce-seller": "ecommerce_seller",
       "Do-you-have-a-business-bank-account": "business_bank_account",
     };
