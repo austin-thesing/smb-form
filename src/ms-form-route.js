@@ -373,7 +373,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "Use-of-funds": "use_of_funds",
       "Timeline-For-Loan": "when_do_you_need_the_loan_",
       "When-did-you-start-your-business": "year_founded",
-      "Are-You-An-Ecommerce-Seller": "ecommerce_seller",
+      "Are-you-an-ecommerce-seller": "ecommerce_seller",
       "Do-you-have-a-business-bank-account": "business_bank_account",
     };
 
