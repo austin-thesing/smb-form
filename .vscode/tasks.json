@@ -2,9 +2,10 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Watch All Forms",
-      "type": "npm",
-      "script": "watch",
+      "label": "Watch Forms",
+      "type": "shell",
+      "command": "nodemon",
+      "args": ["--watch", "src/core", "--watch", "src/configs/**/config.json", "--ext", "js,json", "--exec", "cross-env NODE_ENV=production node build.js"],
       "group": {
         "kind": "build",
         "isDefault": true
@@ -14,40 +15,14 @@
       "presentation": {
         "reveal": "always",
         "panel": "new"
-      },
-      "runOptions": {
-        "runOn": "folderOpen"
       }
     },
     {
-      "label": "Watch SMB Form",
+      "label": "Build Forms",
       "type": "shell",
-      "command": "nodemon",
-      "args": ["--watch", "src/core", "--watch", "src/configs/smb-form", "--ext", "js,json", "--exec", "node build.js"],
-      "problemMatcher": ["$esbuild"],
-      "isBackground": true,
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "Build Production",
-      "type": "npm",
-      "script": "build:prod",
+      "command": "cross-env",
+      "args": ["NODE_ENV=production", "node", "build.js"],
       "group": "build",
-      "problemMatcher": ["$esbuild"],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared",
-        "showReuseMessage": false
-      }
-    },
-    {
-      "label": "Build SMB Form",
-      "type": "shell",
-      "command": "node",
-      "args": ["build.js"],
       "problemMatcher": ["$esbuild"],
       "presentation": {
         "reveal": "always",
