@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const fundingAmountInput = document.getElementById("Funding-Amount");
   const avgMonthlySalesInput = document.getElementById("Revenue-per-month");
   const fundingReasonSelect = document.getElementById("Use-of-funds");
+  // Get the next button that's in the same step as the ecommerce seller select
+  const nextButton = ecommerceSellerSelect.closest('[data-form="step"]').querySelector('[data-form="next-btn"]');
 
   // Improved error handling for missing elements
   const missing = [];
@@ -15,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!fundingAmountInput) missing.push("Funding-Amount");
   if (!avgMonthlySalesInput) missing.push("Revenue-per-month");
   if (!fundingReasonSelect) missing.push("Use-of-funds");
+  if (!nextButton) missing.push("next-btn in ecommerce step");
   if (missing.length) {
     if (DEBUG) console.error("Missing required form elements:", missing.join(", "));
     return;
@@ -51,9 +54,10 @@ document.addEventListener("DOMContentLoaded", () => {
     return mapped;
   }
 
-  ecommerceSellerSelect.addEventListener("change", (event) => {
-    if (DEBUG) console.log(`[DEBUG] Ecommerce seller changed: ${event.target.value}`);
-    if (event.target.value === "Yes") {
+  nextButton.addEventListener("click", (event) => {
+    if (DEBUG) console.log(`[DEBUG] Next button clicked, ecommerce value: ${ecommerceSellerSelect.value}`);
+    if (ecommerceSellerSelect.value === "Yes") {
+      event.preventDefault();
       const fundingAmount = cleanDollarValue(fundingAmountInput);
       const avgMonthlySales = cleanDollarValue(avgMonthlySalesInput);
       const fundingReason = getMappedFundingReason(fundingReasonSelect);

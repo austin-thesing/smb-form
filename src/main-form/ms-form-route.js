@@ -400,7 +400,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (value && value.trim() !== "") {
         // Clean dollar amounts for specific fields
-        if (webflowField === "Funding-Amount" || webflowField === "Revenue-per-month") {
+        if (webflowField === "Funding-Amount" || webflowField === "Revenue-Per-Month") {
           value = cleanDollarAmount(value);
         }
 

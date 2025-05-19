@@ -6,8 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const fundingAmountInput = document.getElementById("Funding-Amount");
   const avgMonthlySalesInput = document.getElementById("Revenue-per-month");
   const fundingReasonSelect = document.getElementById("Use-of-funds");
+  // Get the next button that's in the same step as the ecommerce seller select
+  const nextButton = ecommerceSellerSelect.closest('[data-form="step"]').querySelector('[data-form="next-btn"]');
 
-  if (!form || !ecommerceSellerSelect || !fundingAmountInput || !avgMonthlySalesInput || !fundingReasonSelect) {
+  if (!form || !ecommerceSellerSelect || !fundingAmountInput || !avgMonthlySalesInput || !fundingReasonSelect || !nextButton) {
     console.error("One or more required form elements not found.");
     return;
   }
@@ -38,8 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return mapping[selectedValue] || null;
   }
 
-  ecommerceSellerSelect.addEventListener("change", (event) => {
-    if (event.target.value === "Yes") {
+  nextButton.addEventListener("click", (event) => {
+    if (ecommerceSellerSelect.value === "Yes") {
+      event.preventDefault();
       const fundingAmount = cleanDollarValue(fundingAmountInput);
       const avgMonthlySales = cleanDollarValue(avgMonthlySalesInput);
       const fundingReason = getMappedFundingReason(fundingReasonSelect);
