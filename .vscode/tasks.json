@@ -24,7 +24,7 @@
       "type": "npm",
       "script": "build:prod",
       "group": "build",
-      "problemMatcher": ["$tsc"],
+      "problemMatcher": ["$esbuild"],
       "presentation": {
         "reveal": "always",
         "panel": "shared",
@@ -43,6 +43,14 @@
         "panel": "shared",
         "showReuseMessage": false
       }
+    },
+    {
+      "type": "npm",
+      "script": "install",
+      "group": "clean",
+      "problemMatcher": [],
+      "label": "npm: install",
+      "detail": "install dependencies from package"
     }
   ]
 }
